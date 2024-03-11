@@ -2,7 +2,7 @@
 import axios from "axios";
 import { NextApiRequest, NextApiResponse } from "next";
 
-// Create an instance of axios with predefined configs
+// Create an instance of axios with predefined configs of assemblyai
 const assembly = axios.create({
   baseURL: "https://api.assemblyai.com/v2",
   headers: {
@@ -11,6 +11,7 @@ const assembly = axios.create({
   },
 });
 
+//  get the transcribed result using id if transcription is completed
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     // Make sure to validate the body structure and presence of the id

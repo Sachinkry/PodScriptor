@@ -5,8 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Loader from '@/components/ui/Loader';
 import { useState, useCallback, ChangeEvent } from 'react';
-import { AssemblyAI } from 'assemblyai';
-import clsx from "clsx";
+import clsx from "clsx";  // add class neames together
 import axios from 'axios';
 
 interface TranscriptionResult {
@@ -14,12 +13,15 @@ interface TranscriptionResult {
   // Include other relevant properties of the transcription result
 }
 
+// wait for some time (ms) before calling next function or action 
 const wait = (time: number): Promise<void> => {
   return new Promise((resolve) => {
     setTimeout(resolve, time);
   });
 };
 
+// upload the file to assembly ai '/upload' endpoint 
+// takes a File object & returns a Promise, which when resolved gives URL of the uploaded file
 const upload = async (file: File): Promise<any> => {
   const formData = new FormData();
 
@@ -34,6 +36,7 @@ const upload = async (file: File): Promise<any> => {
   return response.data.upload_url;
 };
 
+// takes URL of uploaded-file & returns the transcribed data 
 const transcribe = async (url: string): Promise<string> => {
   const response = await axios.post("/api/transcribe", { data: { url } });
   const id = response.data.id;
@@ -62,7 +65,7 @@ export default function Home() {
        setTranscript("");
        setError("");
        setStatus("");
-       event.target.value = "";
+      //  event.target.value = "";
     }
   };
 
@@ -111,7 +114,7 @@ export default function Home() {
         <div className="mt-6 flex w-full max-w-md flex-col items-stretch gap-4 px-4 sm:flex-row">
           <Input
             placeholder="Upload Audio File"
-            className="flex-1 "
+            className="flex-1 curosor-pointer"
             type='file'
             onChange={handleInput}
           />
@@ -127,7 +130,7 @@ export default function Home() {
         <div className='bg-neutral-900 w-1/2 h-0.5 mt-8 '></div>
 
 
-        <div className="mt-6 mx-4 w-full max-w-4xl grid-cols-4 gap-4 h-1/2 rounded-md p-3 flex items-center ">
+        <div className="mt-6 mx-4 w-full max-w-4xl min-h-full grid-cols-4 gap-4 h-1/2 rounded-md p-3 flex items-center ">
         {file && (
           <div
             className={clsx(
