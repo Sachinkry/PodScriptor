@@ -1,57 +1,16 @@
 // index.tsx
 import * as React from 'react';
 import Head from 'next/head';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import Loader from '@/components/ui/Loader';
 import { useState, useCallback, ChangeEvent } from 'react';
-import clsx from "clsx";  // add class neames together
-import axios from 'axios';
+import InputAndTranscribeBtn from '@/components/InputAndTranscribeBtn';
+import TranscriptionDisplay from '@/components/TranscriptionDisplay';
+import { uploadFile } from '@/lib/uploadFile';
+import { transcribe } from '@/lib/transcribe';
 
 interface TranscriptionResult {
   text: string;
   // Include other relevant properties of the transcription result
 }
-
-// wait for some time (ms) before calling next function or action 
-const wait = (time: number): Promise<void> => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, time);
-  });
-};
-
-// upload the file to assembly ai '/upload' endpoint 
-// takes a File object & returns a Promise, which when resolved gives URL of the uploaded file
-const upload = async (file: File): Promise<any> => {
-  const formData = new FormData();
-
-  formData.append("data", file);
-
-  const response = await axios.post("/api/upload", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
-
-  return response.data.upload_url;
-};
-
-// takes URL of uploaded-file & returns the transcribed data 
-const transcribe = async (url: string): Promise<string> => {
-  const response = await axios.post("/api/transcribe", { data: { url } });
-  const id = response.data.id;
-
-  let data = response.data;
-
-  while (data.status !== "completed" && data.status !== "error") {
-    await wait(1000);
-    const response = await axios.post("/api/result", { data: { id } });
-
-    data = response.data;
-  }
-
-  return data;
-};
 
 export default function Home() {
   const [file, setFile] = useState<File | null>(null);
@@ -76,7 +35,7 @@ export default function Home() {
       setStatus("uploading");
       
       // The upload function is assumed to return the URL of the uploaded file
-      const url: string = await upload(file);
+      const url: string = await uploadFile(file);
       
       setStatus("transcribing");
       
@@ -94,7 +53,7 @@ export default function Home() {
 
   
   return (
-    <div className="bg-neutral-50 dark:bg-neutral-900">
+    <div className="bg-neutral-50 dark:bg-neutral-900 space-y-4 flex flex-col gap-4">
       <Head>
         <title>Transcriptor</title>
         <meta name="description" content="Transcribe your audio files" />
@@ -110,27 +69,16 @@ export default function Home() {
             Upload Your Audio File below
           </p>
         </div>
+        
+        <InputAndTranscribeBtn 
+          onFileChange={handleInput} 
+          onTranscribeClick={handleTranscription}
+        />
 
-        <div className="mt-6 flex w-full max-w-md flex-col items-stretch gap-4 px-4 sm:flex-row">
-          <Input
-            placeholder="Upload Audio File"
-            className="flex-1 curosor-pointer"
-            type='file'
-            onChange={handleInput}
-          />
-          <Button 
-            variant="default" 
-            size="default"
-            onClick={handleTranscription}
-          >
-            Transcribe
-          </Button>
-
-        </div>
         <div className='bg-neutral-900 w-1/2 h-0.5 mt-8 '></div>
 
-
-        <div className="mt-6 mx-4 w-full max-w-4xl min-h-full grid-cols-4 gap-4 h-1/2 rounded-md p-3 flex items-center ">
+        {/* turn this into a transcribe component; name the component based on the content;  */}
+        {/* <div className="mt-6 mx-4 w-full max-w-4xl min-h-full grid-cols-4 gap-4 h-1/2 rounded-md p-3 flex items-center ">
         {file && (
           <div
             className={clsx(
@@ -151,15 +99,17 @@ export default function Home() {
               {error && <span className="text-red-500">{error}</span>}
               {!status &&
                 !error &&
-                `File "${file.name}" ready for transcription`}
+                `File "${file.name}" is ready for transcription`}
             </div>
           )}
 
           </div>
         )}
-        </div>
+        </div> */}
 
-        <footer className="mt-12 mb-4 text-center text-neutral-600 dark:text-neutral-400">
+        <TranscriptionDisplay file={file} transcript={transcript} status={status} error={error} />
+
+        <footer className="mt-12 mb-4 text-center text-neutral-600 dark:text-neutral-400 text-sm">
           Made with ❤ by Sachin
         </footer>
       </div>

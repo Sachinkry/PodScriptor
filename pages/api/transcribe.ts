@@ -20,6 +20,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const response = await assembly.post("/transcript", {
       audio_url: req.body.data.url,
+      speaker_labels: true
     });
 
     res.status(200).json(response.data);
