@@ -6,16 +6,13 @@ import InputAndTranscribeBtn from '@/components/InputAndTranscribeBtn';
 import TranscriptionDisplay from '@/components/TranscriptionDisplay';
 import { uploadFile } from '@/lib/uploadFile';
 import { transcribe } from '@/lib/transcribe';
+import { TranscriptionResult } from '@/interfaces/type';
 
-interface TranscriptionResult {
-  text: string;
-  // Include other relevant properties of the transcription result
-}
 
 export default function Home() {
   const [file, setFile] = useState<File | null>(null);
   const [status, setStatus] = useState<string>("");
-  const [transcript, setTranscript] = useState<string | TranscriptionResult>("");
+  const [transcript, setTranscript] = useState<string | TranscriptionResult | null>(null);
   const [error, setError] = useState<string>("");
 
   const handleInput = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -51,6 +48,9 @@ export default function Home() {
     }
   };
 
+  const isTranscribeButtonDisabled = !file || status === "transcribing";
+  console.log("Button disabled state:", isTranscribeButtonDisabled);
+
   
   return (
     <div className="bg-neutral-50 dark:bg-neutral-900 space-y-4 flex flex-col gap-4">
@@ -73,44 +73,15 @@ export default function Home() {
         <InputAndTranscribeBtn 
           onFileChange={handleInput} 
           onTranscribeClick={handleTranscription}
+          isDisabled={isTranscribeButtonDisabled}
         />
 
         <div className='bg-neutral-900 w-1/2 h-0.5 mt-8 '></div>
 
-        {/* turn this into a transcribe component; name the component based on the content;  */}
-        {/* <div className="mt-6 mx-4 w-full max-w-4xl min-h-full grid-cols-4 gap-4 h-1/2 rounded-md p-3 flex items-center ">
-        {file && (
-          <div
-            className={clsx(
-              "flex justify-center bg-neutral-300  w-full items-center rounded-lg border mt-2 p-3",
-              error && "border-red-500"
-            )}
-          >
-            {transcript && !error ? (
-            typeof transcript === 'string' ? transcript : (transcript as TranscriptionResult).text // Check if transcript is a string; otherwise, try to render transcript.text
-                    ) : (
-            <div className="w-full flex justify-center">
-              {status && !error && (
-                <>
-                  <Loader />
-                  <span className="ml-2 capitalize">{status}...</span>
-                </>
-              )}
-              {error && <span className="text-red-500">{error}</span>}
-              {!status &&
-                !error &&
-                `File "${file.name}" is ready for transcription`}
-            </div>
-          )}
-
-          </div>
-        )}
-        </div> */}
-
         <TranscriptionDisplay file={file} transcript={transcript} status={status} error={error} />
 
         <footer className="mt-12 mb-4 text-center text-neutral-600 dark:text-neutral-400 text-sm">
-          Made with ❤ by Sachin
+          Made with &hearts; by Sachin
         </footer>
       </div>
     </div>

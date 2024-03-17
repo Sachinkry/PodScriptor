@@ -5,9 +5,10 @@ import { Input } from '@/components/ui/input';
 interface InputAndTranscribeBtnProps {
   onFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onTranscribeClick: () => void;
+  isDisabled: boolean;
 }
 
-const InputAndTranscribeBtn: React.FC<InputAndTranscribeBtnProps> = ({ onFileChange, onTranscribeClick }) => {
+const InputAndTranscribeBtn: React.FC<InputAndTranscribeBtnProps> = ({ onFileChange, onTranscribeClick, isDisabled }) => {
   return (
     <div className="flex w-full max-w-md flex-col items-stretch gap-4 px-4 sm:flex-row mt-4">
       <Input
@@ -20,6 +21,12 @@ const InputAndTranscribeBtn: React.FC<InputAndTranscribeBtnProps> = ({ onFileCha
         variant="default" 
         size="default"
         onClick={onTranscribeClick}
+        disabled={isDisabled}
+        className={`${
+          isDisabled
+            ? "bg-gray-400 text-gray-200 cursor-not-allowed" // for disabled state
+            : "bg-blue-500 hover:bg-blue-700 text-white" // for default/enabled state
+        }`}
       >
         Transcribe
       </Button>

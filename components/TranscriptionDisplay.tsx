@@ -1,17 +1,8 @@
 // components/TranscriptionDisplay.tsx
 import clsx from 'clsx';
 import Loader from '@/components/ui/Loader';
+import { TranscriptionResult } from '@/interfaces/type';
 
-interface Utterance {
-  speaker: string;
-  text: string;
-  start: number;
-  end: number;
-}
-
-interface TranscriptionResult {
-  utterances: Utterance[];
-}
 
 
 interface TranscriptionDisplayProps {
@@ -65,18 +56,18 @@ const TranscriptionDisplay: React.FC<TranscriptionDisplayProps> = ({ file, trans
             )
           ) : (
             // Handle loading, status, and error display
-            <>
+            <div className="text-center">
               {status && !error && (
-                <>
+                <div className="flex flex-row  justify-center">
                   <Loader />
-                  <span className="ml-2 capitalize text-neutral-700 dark:text-neutral-200">{status}...</span>
-                </>
+                  <span className="ml-2 capitalize text-neutral-700 dark:text-neutral-200">{status} File...</span>
+                </div>
               )}
               {error && <span className="text-red-500">{error}</span>}
               {!status && !error && (
-                <span className="text-neutral-700 dark:text-neutral-200">File "{file.name}" is ready for transcription</span>
+                <p className="text-neutral-700 dark:text-neutral-200 text-center text-sm">File &quot;{file.name}&quot; is ready for transcription</p>
               )}
-            </>
+            </div>
           )}
         </div>
       ) : (
